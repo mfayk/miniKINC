@@ -30,7 +30,10 @@ int main(int argc, char** argv)
 
 	FLIPIT_Init(rank, argc, argv, seed);
  	printf("Should be corrupted: %d + %d = %d\n", a, b,b);
-	matrixAddOuterProduct(matrix, 1, vect);
+//	matrixAddOuterProduct(matrix, 1, vect);
 	FLIPIT_Finalize(NULL);
+	
+	matrixAddOuterProduct(matrix,1,vect);	
+
 	return 0;
 }

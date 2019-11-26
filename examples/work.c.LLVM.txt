@@ -3,8 +3,8 @@ File Name: work.c
 
 Function Name: work
 ------------------------------------------------------------------------------
-#432	Store	Value	Arith-Fix	__NF:0
-#433	Store	Value	Arith-Fix	__NF:0
-#434	Load	Result	Arith-FP	/scratch1/mfaykus/FlipIt/examples/work.c:3
-#435	Load	Result	Arith-FP	/scratch1/mfaykus/FlipIt/examples/work.c:3
-#436	Add	Result	Arith-FP	/scratch1/mfaykus/FlipIt/examples/work.c:3
+#522	Store	Value	Arith-Fix	__NF:0
+#523	Store	Value	Arith-Fix	__NF:0
+#524	Load	Result	Arith-FP	/scratch1/mfaykus/FlipIt/examples/work.c:3
+#525	Load	Result	Arith-FP	/scratch1/mfaykus/FlipIt/examples/work.c:3
+#526	Add	Result	Arith-FP	/scratch1/mfaykus/FlipIt/examples/work.c:3
