@@ -3,8 +3,8 @@
 #include "/scratch1/mfaykus/FlipIt/include/FlipIt/corrupt/corrupt.h"
 
 
-float elem(float*  matrix[], int i, int j);
-void matrixAddOuterProduct(float* matrix[], float c, float* vect);
+//float **elem(float*  matrix[], int i, int j);
+void matrixAddOuterProduct(float** matrix, float c, float* vect);
 
 
 int main(int argc, char** argv)
@@ -19,7 +19,8 @@ int main(int argc, char** argv)
 	float matrix[2][2];
 	float vect[2];
 	
-	int i, j;
+	int i=0;
+	int j=0;
 	for(i=0; i<2; i++) {
 	vect[i] = 1;
 		for(j=0;j<2;j++) {
@@ -27,13 +28,29 @@ int main(int argc, char** argv)
 		}
 	}
 
+	printf("print\n");
+	for(i=0; i<2; i++) {
+		j=0;
+		for(j=0;j<2;j++) {
+			printf("%d ", matrix[i][j]);
+			if(j==2){
+				printf("\n");
+			}
+		}
+	}
+
+
+
 
 	FLIPIT_Init(rank, argc, argv, seed);
  	printf("Should be corrupted: %d + %d = %d\n", a, b,b);
 //	matrixAddOuterProduct(matrix, 1, vect);
 	FLIPIT_Finalize(NULL);
 	
-	matrixAddOuterProduct(matrix,1,vect);	
+	//matrixAddOuterProduct(matrix,1,vect);	
+
+	printf("test\n");
+
 
 	return 0;
 }
