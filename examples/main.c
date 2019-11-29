@@ -37,8 +37,8 @@ int main(int argc, char** argv)
 	//create test case here
 	
 	int a = 4, b=3;
-	int rank = 0;
-	int seed = 7;
+	int rank = 1;
+	int seed = 29678;
 
 	int rows = 2;
 	int cols = 2;	
@@ -84,12 +84,13 @@ int main(int argc, char** argv)
 	}
 
 
+	FLIPIT_Init(rank, argc, argv, seed);	
+	matrixAddOuterProduct(&matrix, 5, vect);
+	FLIPIT_Finalize(NULL);
 
 
-	FLIPIT_Init(rank, argc, argv, seed);
- 	
 	printf("Should be corrupted: %d + %d = %d\n", a, b,b);
-	for(i=0; i<2; i++) {
+        for(i=0; i<2; i++) {
                 j=0;
                 for(j=0;j<2;j++) {
                         printf("%f ", matrix[i][j]);
@@ -99,11 +100,10 @@ int main(int argc, char** argv)
                 }
         }
 	
-	matrixAddOuterProduct(&matrix, 5, vect);
 
 
-	FLIPIT_Finalize(NULL);
-	
+
+
 	//matrixAddOuterProduct(matrix,1,vect);	
 
 	printf("test\n");
