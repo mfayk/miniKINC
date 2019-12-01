@@ -34,15 +34,15 @@ BUILD_TYPE = "Release+Asserts"
 #####################################################
 config = "KINC.config"
 funcList = "\"\""
-#prob = 0
-prob = 1e-8
+prob = 0.95
+#prob = 1e-8
 byte = -1
 bit = -1
 singleInj = 1
-ptr = 1
+ptr = 0
 arith = 1
-ctrl = 1
-stateFile = "KINC"
+ctrl = 0
+#stateFile = "KINC"
 
 ############# Library Parameters #####################
 #

@@ -68,20 +68,18 @@ int main(int argc, char** argv)
 
 	vect = malloc(rows * sizeof(vect));
 	fill1D(&vect, rows);	
-	print1D(vect, rows);
 	
 	alloc2D(&matrix, rows, cols);
 	fill2D(&matrix, rows, cols); 
 	print2D(matrix, rows, cols); 
 	
 	fill2DParity(c, &par, matrix, rows, cols);
-	print2DParity(par, rows, cols);
+//	print2DParity(par, rows, cols);
 
 	FLIPIT_SetInjector(FLIPIT_ON);
 	matrixAddOuterProduct(&matrix, 5, &vect);
 	FLIPIT_Finalize(NULL);
 	
-	print1D(vect, rows);
 	print2D(matrix, rows, cols);
 	
 	free(vect);

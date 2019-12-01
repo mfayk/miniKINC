@@ -1,0 +1,5 @@
+
+- profile KINC run to see where most computational time is spent
+- figure out how to inject values instead of arithmetic operations
+	- look at documentation
+
