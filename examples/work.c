@@ -1,30 +1,26 @@
 #include <stdio.h>
 
 /*
-float elem(float* matrix[], int i, int j)
+float elem(float* mtx[], int i, int j)
 {
-	return *matrix[i * 2 + j];
+	return *mtx[i * 2 + j];
 }
 */
 
 
 
 
-void matrixAddOuterProduct(float** matrix, float c, float* vect)
+void matrixAddOuterProduct(float ***mtx, float c, float **vect)
 {
-	int i,j;
-	for( i=0; i<2; i++) {
-                j=0;
-                for(j=0;j<2;j++) {
-                        printf("%f ", matrix[i][j]);
-                        if(j==1){
-                                printf("\n");
-                        }
-                }
-        }
-	matrix[0][0] = matrix[0][0] + c * vect[0] * vect[0];
-	matrix[0][1] = matrix[0][1] + c * vect[0] * vect[1];
-	matrix[1][0] = matrix[1][0] + c * vect[1] * vect[0];
-	matrix[1][1] = matrix[1][1] + c * vect[1] * vect[1];
-
+	int i = 0;
+	int j = 0;
+	for(i=0; i<2; i++) {
+		for(j=0;j<2;j++) {
+			(*mtx)[i][j] = (*mtx)[i][j] + c * (*vect)[i] * (*vect)[j];
+		}
+	}
+	//(*mtx)[0][0] = (*mtx)[0][0] + c * (*vect)[0] * (*vect)[0];
+	//(*mtx)[0][1] = (*mtx)[0][1] + c * (*vect)[0] * (*vect)[1];
+	//(*mtx)[1][0] = (*mtx)[1][0] + c * (*vect)[1] * (*vect)[0];
+	//(*mtx)[1][1] = (*mtx)[1][1] + c * (*vect)[1] * (*vect)[1];
 }

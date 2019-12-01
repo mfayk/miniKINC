@@ -1,6 +1,8 @@
 
 #include <stdio.h>
-#include "/scratch1/mfaykus/FlipIt/include/FlipIt/corrupt/corrupt.h"
+#include <stdlib.h>
+//#include "/scratch1/mfaykus/FlipIt/include/FlipIt/corrupt/corrupt.h"
+#include "/home/alpoulo/install/flipit-install/FlipIt/include/FlipIt/corrupt/corrupt.h"
 
 /*
 #include <signal.h>
@@ -28,85 +30,97 @@ GLOBAL_TIMESTEP);
 
 
 //float **elem(float*  matrix[], int i, int j);
-void matrixAddOuterProduct(float** matrix, float c, float* vect);
+void matrixAddOuterProduct(float ***matrix, float c, float **vect);
+
+
+void alloc2D(float ***mtx, int rows, int cols)
+{
+	int i = 0;
+	*mtx = malloc(sizeof(float*) * rows);
+	*mtx[0] = malloc(sizeof(float) * rows * cols);
+	for(i=0; i<rows; i++) {
+		(*mtx)[i] = (**mtx + (cols * i));
+	}
+}
+
+void fill1D(float **vect, int len)
+{
+	int i = 0;
+	for(i=0; i<len; i++) {
+		(*vect)[i] = 2.0;
+	}
+}
+
+void fill2D(float ***mtx, int rows, int cols)
+{
+	int i = 0;
+	int j = 0;
+	for(i=0; i<rows; i++) {
+		for(j=0; j<cols; j++) {
+			(*mtx)[i][j] = 10.5;	
+		}
+	}
+}
+
+void print1D(float *vect, int len)
+{
+	int i = 0;
+	printf("\n");
+	for(i = 0; i<len; i++) {
+		printf("%f ", vect[i]);
+	}
+	printf("\n");
+}
+
+void print2D(float **mtx, int rows, int cols)
+{
+	int i = 0;
+	int j = 0;
+	printf("\n");
+	for(i=0; i<rows; i++) {
+		for(j=0; j<cols; j++) {
+			printf("%f ", mtx[i][j]);
+		}
+		printf("\n");
+	}
+}
+
 
 
 int main(int argc, char** argv)
 {
-
+	srand(time(NULL));
 	//create test case here
 	
-	int a = 4, b=3;
 	int rank = 1;
-	int seed = 29678;
+//	int seed = 29678;
+	int seed = rand();
 
 	int rows = 2;
 	int cols = 2;	
 
 
-	float** matrix;
-	float* vect;
+	float **matrix;
+	float *vect;
 	
 	int i=0;
 	int j=0;
-	printf("i= %d, j= %d\nvect= ",i,j);
-	
 
 	vect = malloc(rows * sizeof(vect));
-	matrix = malloc(rows * sizeof(matrix));
-
-
-	for(i=0;i<rows;i++){
-		matrix[i] = malloc(cols * sizeof(matrix[i]));
-	}
+	alloc2D(&matrix, rows, cols);
 	
-
-
-
-	for(i=0; i<2; i++) {
-	vect[i] = 2;
-		for(j=0;j<2;j++) {
-			matrix[i][j] = 10.5;
-			if(j==i){
-				printf("\n");
-				}
-		}
-	}
-	printf("\n");
-	for(i=0; i<2; i++) {
-		j=0;
-		for(j=0;j<2;j++) {
-			printf("%f ", matrix[i][j]);
-			if(j==1){
-				printf("\n");
-			}
-		}
-	}
-
+	fill1D(&vect, rows);	
+	fill2D(&matrix, rows, cols); 
+	
+	print1D(vect, rows);
+	print2D(matrix, rows, cols); 
 
 	FLIPIT_Init(rank, argc, argv, seed);	
-	matrixAddOuterProduct(&matrix, 5, vect);
+	matrixAddOuterProduct(&matrix, 5, &vect);
 	FLIPIT_Finalize(NULL);
 
-
-	printf("Should be corrupted: %d + %d = %d\n", a, b,b);
-        for(i=0; i<2; i++) {
-                j=0;
-                for(j=0;j<2;j++) {
-                        printf("%f ", matrix[i][j]);
-                        if(j==1){
-                                printf("\n");
-                        }
-                }
-        }
-	
-
-
-
-
-	//matrixAddOuterProduct(matrix,1,vect);	
-
-	printf("test\n");
+	print1D(vect, rows);
+	print2D(matrix, rows, cols);
 
 
 	return 0;
