@@ -1,0 +1,32 @@
+File Version #: 1
+File Name: work.c
+
+Function Name: matrixAddOuterProduct
+------------------------------------------------------------------------------
+#10704	Store	Value	Arith-FP	__NF:0
+#10705	Store	Value	Arith-Fix	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:15
+#10706	Store	Value	Arith-Fix	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:16
+#10707	Store	Value	Arith-Fix	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:17
+#10708	Load	Result	Arith-FP	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:17
+#10709	Store	Value	Arith-Fix	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:18
+#10710	Load	Result	Arith-FP	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:18
+#10711	Load	Result	Arith-FP	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:19
+#10712	Load	Result	Arith-FP	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:19
+#10713	Load	Result	Arith-FP	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:19
+#10714	Load	Result	Arith-FP	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:19
+#10715	Load	Result	Arith-FP	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:19
+#10716	Load	Result	Arith-FP	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:19
+#10717	FMul	Result	Arith-FP	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:19
+#10718	Load	Result	Arith-FP	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:19
+#10719	Load	Result	Arith-FP	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:19
+#10720	FMul	Result	Arith-FP	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:19
+#10721	FAdd	Result	Arith-FP	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:19
+#10722	Load	Result	Arith-FP	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:19
+#10723	Load	Result	Arith-FP	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:19
+#10724	Store	Value	Arith-FP	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:19
+#10725	Load	Result	Arith-FP	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:18
+#10726	Add	Result	Arith-FP	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:18
+#10727	Store	Value	Arith-Fix	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:18
+#10728	Load	Result	Arith-FP	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:17
+#10729	Add	Result	Arith-FP	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:17
+#10730	Store	Value	Arith-Fix	/home/alpoulo/install/miniKINC-install/miniKINC/kinc/work.c:17
