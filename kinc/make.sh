@@ -20,5 +20,5 @@ cat work.c.LLVM.txt
 gcc -c ../sdecc/src/ecc.c ../sdecc/src/ecc.h 
 gcc -c util.c util.h
 gcc -I$FLIPIT_PATH/include -o main.o -c main.c
-gcc -o test final.o ecc.o util.o main.o -L$FLIPIT_PATH/lib/ -lcorrupt
+gcc -pg -g -o test final.o ecc.o util.o main.o -L$FLIPIT_PATH/lib/ -lcorrupt
 ./test
