@@ -45,11 +45,12 @@ Data ECC_Convert_double(double val)
 Parity ECC_Parity_get(Code *c, float val)
 {
     int i, j;
-    Parity p = 0;
-	Data dat = ECC_Convert_float(val);
+//	Data dat = ECC_Convert_float(val);
+	Data dat = *(uint32_t *)&val;
 	Data *par = malloc(sizeof(Data) * c->p_bits);
+    Parity p = 0;
     
-    for(i = 0; i < c->p_bits; i++) {
+	for(i=0; i<c->p_bits; i++) {
         par[i] = 0;
         par[i] = dat & c->matrix[i];
         for(j = 0; j < c->p_bits-2; j++) {
@@ -66,8 +67,9 @@ Parity ECC_Parity_get(Code *c, float val)
 //TODO write routine to convert DATA_TYPE to type Data
 Codeword *ECC_Codeword_create(Code *c, Data dat)
 {
-    Codeword *cw = ECC_Codeword_init();
-    cw->dat = dat;
+//	Codeword *cw = ECC_Codeword_init();
+   	Codeword *cw = malloc(sizeof(Codeword));
+	cw->dat = dat;
     ECC_Codeword_encode(c, cw);
 
     return cw;

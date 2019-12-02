@@ -42,8 +42,8 @@ int main(int argc, char** argv)
 	
 	srand(time(NULL));
 
-	int rows = 1000;
-	int cols = 1000;	
+	int rows = 10000;
+	int cols = 10000;	
 
 	int n = 39;
 	int k = 32; 
@@ -54,10 +54,6 @@ int main(int argc, char** argv)
 	float **matrix = NULL;
 	float *vect = NULL;
 	
-		
-	int i = 0;
-	int j = 0;
-
 	vect = malloc(rows * sizeof(vect));
 	fill1D(&vect, rows);	
 	
