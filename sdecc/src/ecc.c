@@ -45,7 +45,6 @@ Data ECC_Convert_double(double val)
 Parity ECC_Parity_get(Code *c, float val)
 {
     int i, j;
-//	Data dat = ECC_Convert_float(val);
 	Data dat = *(uint32_t *)&val;
 	Data *par = malloc(sizeof(Data) * c->p_bits);
     Parity p = 0;
