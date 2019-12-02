@@ -62,9 +62,17 @@ void free2DSyndrome(Syndrome **syn)
 	free(syn);
 }
 
-void free2DCW(Codeword ****cw)
+void free2DCW(Codeword ****cw, int rows, int cols)
 {
-	//TODO
+	int i = 0;
+	int j = 0;
+	for(i=0; i<rows; i++) {
+		for(j=0; j<cols; j++) {
+			ECC_Codeword_destroy((*cw)[i][j]);
+		}
+	}
+	free(*cw);
+	free(cw);
 }
 
 void fill1D(float **vect, int len)
