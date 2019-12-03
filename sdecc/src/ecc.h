@@ -41,10 +41,15 @@ Code *ECC_Code_create(int, int, char *);
 void ECC_Code_destroy(Code *);
 Parity ECC_Parity_get(Code *, float);
 Codeword *ECC_Codeword_create(Code *, Data);
+void ECC_Codeword_encode(Code *, Codeword *);
+void ECC_LUT_print(Code *c);
 Syndrome ECC_Codeword_detect(Code *, Codeword *);
 int ECC_Codeword_correct(Code *, Codeword *, Syndrome);
+int ECC_Parity_EDAC(Code *, Parity *, float *);
 void ECC_Codeword_print(Codeword *cw);
+void ECC_Codeword_printData(Codeword *cw);
 void ECC_Codeword_destroy(Codeword *);
+
 #endif
 
 #ifdef __cplusplus

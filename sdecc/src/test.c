@@ -4,10 +4,13 @@ int main(int argc, char *argv[])
 {
     int n = 39; 
     int k = 32;
-   	char *scheme = "hamming";	//or "hsiao"
+//	char *scheme = "hamming";	//or "hsiao"
+   	char *scheme = "hsiao";	//or "hsiao"
 	Code *c = ECC_Code_create(n, k, scheme);
-
-    int i;
+	
+	ECC_LUT_print(c);
+    
+	int i;
     for(i=0; i<n; i++) {
         Codeword *cw = ECC_Codeword_create(c, (Data) 0);
         if(i < c->k) {

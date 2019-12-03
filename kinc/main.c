@@ -3,6 +3,8 @@
 #include "../sdecc/src/ecc.h"
 #include "util.h"
 
+void matrixAddOuterProduct(float ***matrix, float c, float **vect);
+void matrixAddOuterProductECC(Code *, Parities **, float ***, float, float *);
 
 int GLOBAL_TIMESTEP = 0;
 
@@ -22,19 +24,17 @@ void mtxProductLogger(FILE* outfile)
 	fprintf(outfile, "Total Insts executed = %llu\n", t);
 }
 
-void matrixAddOuterProduct(float ***matrix, float c, float *vect);
-//void matrixAddOuterProduct(float ***matrix, float c, float **vect, int x, int y);
-
 int main(int argc, char** argv)
 {
-	if (signal (SIGSEGV, sigHandler) == SIG_ERR)
+	if (signal (SIGSEGV, sigHandler) == SIG_ERR) 
 		printf("Error setting segfault handler...\n");
-	if (signal (SIGBUS, sigHandler) == SIG_ERR)
+	if (signal (SIGBUS, sigHandler) == SIG_ERR) 
 		printf("Error setting bus error handler...\n");
-
+	
+	srand(time(NULL));
+	
 	int rank = 0;
-	int seed = 29678;
-//	int seed = rand();
+	int seed = rand();
 	
 	FLIPIT_Init(rank, argc, argv, seed);	
 	FLIPIT_SetCustomLogger(mtxProductLogger);
@@ -43,35 +43,47 @@ int main(int argc, char** argv)
 	
 	int n = 39;
 	int k = 32; 
-	char *scheme = "hamming";
+//	char *scheme = "hamming";
+	char *scheme = "hsiao";
 	Code *c = ECC_Code_create(n, k, scheme);
-	Parity **par;
-
-	srand(time(NULL));
 
 	int rows = 2;
 	int cols = 2;	
-
+	int trials = 1;
+	
+	printf("\nrunning trials . . .\n");
 	int i;
-
-	for(i=0; i<1000000; i++) {
+	for(i=0; i<trials; i++) {
+		float var = 5.0;
 		float **matrix = NULL;
 		float *vect = NULL;
+		set1D(&vect, rows);
+		set2D(&matrix, rows, cols);
 		
-		vect = malloc(rows * sizeof(vect));
-		fill1D(&vect, rows);	
-	
-		alloc2D(&matrix, rows, cols);
-		fill2D(&matrix, rows, cols); 
-	
+		Parities *par = malloc(sizeof(Parities));
+		setParity(c, &(par->cval), var);
+		set1DParity(c, &(par->vect), vect, rows);
+		set2DParity(c, &(par->mtx), matrix, rows, cols);
+		
+		printf("\noriginal cval:\n%f\n", var);
+		printf("\n");
+		printf("original vect:\n");
+		print1D(vect, rows);
+		printf("\n");
+		printf("original matrix:");
+		printf("\n");
+		print2D(matrix, rows, cols);
+
 		FLIPIT_SetInjector(FLIPIT_ON);
-		matrixAddOuterProduct(&matrix, 5, vect);
+		matrixAddOuterProductECC(c, &par, &matrix, var, vect);
 		FLIPIT_SetInjector(FLIPIT_OFF);
+
+		printf("\n(possibly) corrupted matrix:");
+		print2D(matrix, rows, cols);
 		
 		free(vect);
 		free2D(matrix);
 	}
-//	matrixAddOuterProduct(&matrix, 5, &vect, rows, cols);
 	FLIPIT_Finalize(NULL);
 	
 	ECC_Code_destroy(c);
