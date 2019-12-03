@@ -17,9 +17,9 @@ void matrixAddOuterProductECC(Code *c, Parities **pars, float ***mtx, float val,
 {
 	int i;
 	int j;
-	
+	int res = 0;
+/*
 	printf("\nreceived values:\n\n");
-	
 	printf("cval:\n%f\n", val);
 	printf("\nvect:\n");
 	print1D(vect, 2);
@@ -27,11 +27,16 @@ void matrixAddOuterProductECC(Code *c, Parities **pars, float ***mtx, float val,
 	print2D(*mtx, 2, 2);
 	printf("\n");
 	printf("checking for errors . . .\n\n");
-	
-	ECC_Parity_EDAC(c, &((*pars)->cval), &val);
-
+*/	
+	res = ECC_Parity_EDAC(c, &((*pars)->cval), &val);
+	if(res < 0) {
+		printf("DUE encoutered. cannot correct.\n");
+	}
 	for(i=0; i<2; i++) {
-		ECC_Parity_EDAC(c, &((*pars)->vect[i]), &vect[i]);
+		res = ECC_Parity_EDAC(c, &((*pars)->vect[i]), &vect[i]);
+		if(res < 0) {
+			printf("DUE encoutered. cannot correct.\n");
+		}
 	}
 
 	for(i=0; i<2; i++) {

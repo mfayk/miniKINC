@@ -112,16 +112,18 @@ Syndrome ECC_Parity_detect(Code *c, Parity sent, float dat)
 
 int ECC_Parity_EDAC(Code *c, Parity *sent, float *dat)
 {
-	
+/*	
 	printf("checking value\t%02hhx\t%f\n", *sent, *dat);
-	
+*/	
 	int signal = -1;
 	Data tmp = *(Data *)&(*dat);
 	Codeword *cw = ECC_Codeword_create(c, tmp);
 	Syndrome syn = *sent ^ cw->par;
 	if(syn != 0) {
+/*
 		printf("detected error in val %f\n", *dat);
 		printf("attempting to correct . . .\n");
+*/		
 		cw->par = *sent;
 		int res = ECC_Codeword_correct(c, cw, syn);
 		if(res != 0) {
@@ -130,7 +132,9 @@ int ECC_Parity_EDAC(Code *c, Parity *sent, float *dat)
 		else 
 		{
 			*dat = *(float *)&(cw->dat);
+/*			
 			printf("corrected value:\t%f\n\n", *dat);
+*/
 			signal = 1;
 		}
 	}
@@ -147,7 +151,9 @@ int ECC_Codeword_correct(Code *c, Codeword *cw, Syndrome syn)
     int signal = -1;
     while((i<c->n) && (signal < 0)) {
         if(c->lut->syn[i] == syn) {
-    		printf("correcting error . . .\n");
+/* 
+			printf("correcting error . . .\n");
+*/
 			cw->dat = cw->dat ^ c->lut->cw[i]->dat;
             cw->par = cw->par ^ c->lut->cw[i]->par;
             signal = 0;
@@ -187,7 +193,6 @@ void ECC_LUT_generate(Code *c)
     lut->cw = malloc(sizeof(Codeword*) * c->n);
 
     for(i=0; i<c->n; i++) {
-//		lut->cw[i] = ECC_Codeword_init();
   		lut->cw[i] = ECC_Codeword_create(c, 0);
 		if(i < c->k) {
             lut->cw[i]->dat = lut->cw[i]->dat ^ ((Data)1<<(i));
@@ -196,10 +201,6 @@ void ECC_LUT_generate(Code *c)
             lut->cw[i]->par = lut->cw[i]->par ^ ((Parity)1<<(i - (c->k)));
         }
 		lut->syn[i] = ECC_Codeword_detect(c, lut->cw[i]);
-//		lut->syn[i] = lut->cw[i]->par ^ ECC_Parity_get(c, *(float *)&(lut->cw[i]->dat));  
-//		printf("%d\t", lut->syn[i]);
-//		ECC_Codeword_print(lut->cw[i]);
-//		printf("\n");
 	}
     c->lut = lut;
 }

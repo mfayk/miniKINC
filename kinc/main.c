@@ -49,7 +49,7 @@ int main(int argc, char** argv)
 
 	int rows = 2;
 	int cols = 2;	
-	int trials = 1;
+	int trials = 10000000;
 	
 	printf("\nrunning trials . . .\n");
 	int i;
@@ -65,6 +65,7 @@ int main(int argc, char** argv)
 		set1DParity(c, &(par->vect), vect, rows);
 		set2DParity(c, &(par->mtx), matrix, rows, cols);
 		
+/*
 		printf("\noriginal cval:\n%f\n", var);
 		printf("\n");
 		printf("original vect:\n");
@@ -73,19 +74,24 @@ int main(int argc, char** argv)
 		printf("original matrix:");
 		printf("\n");
 		print2D(matrix, rows, cols);
+*/
 
 		FLIPIT_SetInjector(FLIPIT_ON);
 		matrixAddOuterProductECC(c, &par, &matrix, var, vect);
 		FLIPIT_SetInjector(FLIPIT_OFF);
 
+/*
 		printf("\n(possibly) corrupted matrix:");
 		print2D(matrix, rows, cols);
-		
+*/
 		free(vect);
 		free2D(matrix);
+//		free1DParity(par->vect);
+//		free2DParity(par->mtx);
+		free(par);
 	}
 	FLIPIT_Finalize(NULL);
-	
+	printf("\ncompleted trials!\n\n");	
 	ECC_Code_destroy(c);
 
 	return 0;
