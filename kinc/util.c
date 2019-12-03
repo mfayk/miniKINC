@@ -116,58 +116,6 @@ void printCW(Codeword *cw)
 	printf("\n");
 }
 
-/* 1D Codewords */
-void alloc1DCW(Codeword ***vect, int len)
-{
-	*vect = malloc(sizeof(Codeword*) * len);
-}
-
-void free1DCW(Codeword ***vect, int rows)
-{
-	int i = 0;
-	for(i=0; i<rows; i++) {
-		ECC_Codeword_destroy((*vect)[i]);
-	}
-	free(*vect);
-	free(vect);
-}
-
-void fill1DCW(Code *c, Codeword ***cw, float *vect, int len)
-{
-	int i = 0;
-	for(i=0; i<len; i++) {
-		Data dat = *(Data *)&(vect[i]);
-		(*cw)[i] = ECC_Codeword_create(c, dat);
-	}
-}
-
-void check1DCW(Code *c, Codeword **vect, int len)
-{
-	int i = 0;
-	Syndrome syn = 0;
-	int res = 0;
-	for(i=0; i<len; i++) {
-		syn = ECC_Codeword_detect(c, vect[i]);
-		if(syn != 0) {
-			printf("silent data corruption detected . . .\n");
-			printf("corrupted value: ");
-			ECC_Codeword_printData(vect[i]);
-			printf("attempting to correct . . .\n");
-			res = ECC_Codeword_correct(c, vect[i], syn);	
-		}
-	}
-}
-
-void print1DCW(Codeword **cw, int len)
-{
-	int i = 0;
-	printf("\n");
-	for(i=0; i<len; i++) {
-		ECC_Codeword_printData(cw[i]);
-	}
-	printf("\n");
-}
-
 /* 2D Codewords */
 void alloc2DCW(Codeword ****mtx, int rows, int cols)
 {
@@ -222,7 +170,6 @@ void check2DCW(Code *c, Codeword ****cw, int x, int y)
 			}
 		}
 	}
-
 }
 
 void print2DCW(Codeword ***cw, int rows, int cols)
@@ -259,14 +206,9 @@ void printParity(Parity par)
 	printf("\n%02hhx\n", par);
 }
 
-void alloc1DParity(Parity **par, int len)
+void free1DParity(Parity *par)
 {
-	*par = malloc(sizeof(Parity) * len);
-}
-
-void free1DParity(Parity **par)
-{
-	free(*par);
+	free(par);
 }
 
 void fill1DParity(Code *c, Parity **par, float *vect, int len)
@@ -282,8 +224,7 @@ void set1DParity(Code *c, Parity **par, float *vect, int len)
 	*par = malloc(sizeof(Parity) * len);
 	int i;
 	for(i=0; i<len; i++) {
-		(*par)[i] = ECC_Parity_get(c, vect[i]);
-	}
+		(*par)[i] = ECC_Parity_get(c, vect[i]); }
 }
 
 void print1DParity(Parity *par, int len)

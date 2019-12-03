@@ -18,7 +18,7 @@ void matrixAddOuterProductECC(Code *c, Parities **pars, float ***mtx, float val,
 	int i;
 	int j;
 	int res = 0;
-/*
+/*	
 	printf("\nreceived values:\n\n");
 	printf("cval:\n%f\n", val);
 	printf("\nvect:\n");
