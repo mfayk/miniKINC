@@ -26,6 +26,7 @@ void alloc2DCW(Codeword ****, int, int);
 
 void free2D(float **);
 void free2DCW(Codeword ****cw);
+void free1DParity(Parity *);
 void free2DParity(Parity **);
 
 void fill2DZeros(float ***, int, int);

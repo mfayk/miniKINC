@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-g -Wall -Wstrict-prototypes
+CFLAGS= -g -Wall -Wstrict-prototypes
 .PHONY:	cleanobj
 
 all:	test
@@ -14,7 +14,7 @@ ecc.o:	ecc.c ecc.h
 	$(CC) $(CFLAGS) -c ecc.c
 
 clean: 
-	rm -f *.o core* test 
+	rm -f *.o core* *.gch test 
 
 cleanobj:	
 	rm *.o

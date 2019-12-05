@@ -5,50 +5,41 @@
 
 void matrixAddOuterProduct(float ***mtx, float c, float **vect)
 {
-	printf("\nc: %f\n", c);
 	(*mtx)[0][0] = (*mtx)[0][0] + c * (*vect)[0] * (*vect)[0];
 	(*mtx)[0][1] = (*mtx)[0][1] + c * (*vect)[0] * (*vect)[1];
 	(*mtx)[1][0] = (*mtx)[1][0] + c * (*vect)[1] * (*vect)[0];
 	(*mtx)[1][1] = (*mtx)[1][1] + c * (*vect)[1] * (*vect)[1];
 }
 
-void matrixAddOuterProductECC(Code *c, Parities **pars, float ***mtx, float val, 
-							  float *vect)
+void matrixAddOuterProductECC(Code *c, float ***mtx, float val, float *vect, Parity **mtx_par, Parity val_par, Parity *vect_par)
 {
 	int i;
 	int j;
 	int res = 0;
-/*	
-	printf("\nreceived values:\n\n");
-	printf("cval:\n%f\n", val);
-	printf("\nvect:\n");
-	print1D(vect, 2);
-	printf("\nmatrix:");
-	print2D(*mtx, 2, 2);
-	printf("\n");
-	printf("checking for errors . . .\n\n");
-*/	
-	res = ECC_Parity_EDAC(c, &((*pars)->cval), &val);
+
+	res = ECC_Parity_EDAC(c, &val_par, &val);
 	if(res < 0) {
 		printf("DUE encoutered. cannot correct.\n");
 	}
 	for(i=0; i<2; i++) {
-		res = ECC_Parity_EDAC(c, &((*pars)->vect[i]), &vect[i]);
+		res = ECC_Parity_EDAC(c, &vect_par[i], &vect[i]);
 		if(res < 0) {
 			printf("DUE encoutered. cannot correct.\n");
 		}
 	}
-
+	
 	for(i=0; i<2; i++) {
 		for(j=0; j<2; j++) {
-			/* something weird is happening here . . . */
-//			ECC_Parity_EDAC(c, &((*pars)->mtx[i][j]), mtx[i][j]); 
+			res = ECC_Parity_EDAC(c, &mtx_par[i][j], &(*mtx)[i][j]);
+			if(res != 0) {
+				printf("DUE encountered. cannot correct.\n");
+			}
 		}
 	}
-
 	(*mtx)[0][0] = (*mtx)[0][0] + val * vect[0] * vect[0];
 	(*mtx)[0][1] = (*mtx)[0][1] + val * vect[0] * vect[1];
 	(*mtx)[1][0] = (*mtx)[1][0] + val * vect[1] * vect[0];
 	(*mtx)[1][1] = (*mtx)[1][1] + val * vect[1] * vect[1];
 }
+
 

@@ -6,15 +6,14 @@
 #####################################################################
 
 CC=gcc
-CFLAGS = -g -I$(FLIPIT_PATH)/include
+CFLAGS = -Wall -Wextra -g -I$(FLIPIT_PATH)/include
 
 FILIB= -L$(FLIPIT_PATH)/lib -lcorrupt
 FIPASS= $(FLIPIT_PATH)/lib/libFlipItPass.so
 LFLAGS = $(FILIB)
-OBJ = final.o ecc.o util.o main.o 
 
-test:	$(OBJ)
-	$(CC) -pg -g -o test $(OBJ) $(FILIB)
+test:	final.o ecc.o util.o main.o
+	$(CC) -pg -g -o test final.o ecc.o util.o main.o $(FILIB)
 
 work.o: work.c
 	$(LLVM_BUILD_PATH)/bin/clang -fPIC $(CFLAGS) -emit-llvm work.c -c -o work.bc 
@@ -31,14 +30,6 @@ util.o:	util.c util.h
 main.o: main.c
 	$(CC) $(CFLAGS) -o main.o -c main.c
 
-#short: _work.o _main.o
-#	$(CC) -o short _work.o _main.o $(LFLAGS)
-
-#_work.o: work.c
-#	$(FLIPIT_PATH)/scripts/flipit-cc $(CFLAGS) -fPIC -o _work.o -c work.c
-
-#_main.o: main.c
-#	$(FLIPIT_PATH)/scripts/flipit-cc $(CFLAGS) -o _main.o -c main.c
 
 clean:
 	rm -f *.bc

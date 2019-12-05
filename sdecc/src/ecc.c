@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "ecc.h"
 
 Codeword *ECC_Codeword_init(void);
@@ -31,18 +32,6 @@ void ECC_Codeword_encode(Code *c, Codeword *cw)
     }
     free(par);
     cw->par = p;
-}
-
-Data ECC_Convert_float(float val)
-{
-    Data dat = *(Data *)&val;
-    return dat;
-}
-
-float ECC_Revert_float(Data dat)
-{
-	float val = *(float *)&dat;
-	return val;
 }
 
 Parity ECC_Parity_get(Code *c, float val)
@@ -87,13 +76,6 @@ void ECC_Codeword_print(Codeword *cw)
     printf("%02hhx %08x ", cw->par, cw->dat);
 }
 
-// WORKS FOR FLOATS ONLY RIGHT NOW
-void ECC_Codeword_printData(Codeword *cw)
-{
-	float val = ECC_Revert_float(cw->dat);
-	printf("%f ", val);
-}
-
 Syndrome ECC_Codeword_detect(Code *c, Codeword *cw) 
 {
     Codeword *cw_tmp; 
@@ -112,14 +94,11 @@ Syndrome ECC_Parity_detect(Code *c, Parity sent, float dat)
 
 int ECC_Parity_EDAC(Code *c, Parity *sent, float *dat)
 {
-//	printf("checking value\t%02hhx\t%f\n", *sent, *dat);
 	int signal = -1;
 	Data tmp = *(Data *)&(*dat);
 	Codeword *cw = ECC_Codeword_create(c, tmp);
 	Syndrome syn = *sent ^ cw->par;
 	if(syn != 0) {
-///		printf("detected error in val %f\n", *dat);
-//		printf("attempting to correct . . .\n");
 		cw->par = *sent;
 		int res = ECC_Codeword_correct(c, cw, syn);
 		if(res != 0) {
@@ -128,7 +107,7 @@ int ECC_Parity_EDAC(Code *c, Parity *sent, float *dat)
 		else 
 		{
 			*dat = *(float *)&(cw->dat);
-//			printf("corrected value:\t%f\n\n", *dat);
+			printf("corrected value:\t%f\n\n", *dat);
 			signal = 1;
 		}
 	}
@@ -145,7 +124,6 @@ int ECC_Codeword_correct(Code *c, Codeword *cw, Syndrome syn)
     int signal = -1;
     while((i<c->n) && (signal < 0)) {
         if(c->lut->syn[i] == syn) {
-//			printf("correcting error . . .\n");
 			cw->dat = cw->dat ^ c->lut->cw[i]->dat;
             cw->par = cw->par ^ c->lut->cw[i]->par;
             signal = 0;
@@ -153,14 +131,7 @@ int ECC_Codeword_correct(Code *c, Codeword *cw, Syndrome syn)
         }
         i++;
     }
-    //SANITY CHECK
-    if(signal == 0) {
-        Syndrome syndrome = ECC_Codeword_detect(c, cw);
-        if(syndrome != 0) {
-            printf("SOMETHING WENT WRONG IN ECC_Codeword_correct!\n");
-        }
-    }
-    return signal;
+	return signal;
 }
 
 float ECC_Codeword_getData(Codeword *cw)
@@ -241,26 +212,15 @@ int ECC_Matrix_load(Code *c)
 	return res;
 }
 
-Code *ECC_Code_init()
-{
-    Code *c = malloc(sizeof(Code));
-    c->n = 0;
-    c->k = 0;
-    c->p_bits = 0;
-    c->matrix = NULL;
-    c->scheme = NULL;
-    return c;
-}
-
 Code *ECC_Code_create(int n, int k, char *scheme)
 {
-//	Code *c = ECC_Code_init();
   	Code *c = malloc(sizeof(Code));
 	c->n = n;
     c->k = k;
     c->p_bits = n - k;
-    c->scheme = scheme;
-    c->matrix = malloc(sizeof(Data) * (c->n - c->k));
+    c->scheme = strdup(scheme);
+    
+	c->matrix = malloc(sizeof(Data) * (c->n - c->k));
     int res = ECC_Matrix_load(c);
     if(res < 0) {
         c = NULL;
@@ -274,13 +234,16 @@ Code *ECC_Code_create(int n, int k, char *scheme)
 void ECC_Code_destroy(Code *c)
 {
     if(c) {
-        ECC_LUT_destroy(c);
-        free(c->matrix);
+    	free(c->scheme);
+		if(c->matrix) { 
+			free(c->matrix); 
+		}
+		if(c->lut) {
+			ECC_LUT_destroy(c);
+		}
         free(c);
     }
 }
-
-
 
 
 

@@ -1,17 +1,16 @@
 #include "ecc.h"
 
-int main(int argc, char *argv[])
+void code_create_test(void);
+
+void code_create_test()
 {
+	int i;
     int n = 39; 
     int k = 32;
-//	char *scheme = "hamming";	//or "hsiao"
-   	char *scheme = "hsiao";	//or "hsiao"
+   	char *scheme = "hsiao";	
 	Code *c = ECC_Code_create(n, k, scheme);
 	
-	ECC_LUT_print(c);
-    
-	int i;
-    for(i=0; i<n; i++) {
+    for(i=0; i<c->n; i++) {
         Codeword *cw = ECC_Codeword_create(c, (Data) 0);
         if(i < c->k) {
             cw->dat = cw->dat ^ ((Data)1<<(i));
@@ -21,12 +20,7 @@ int main(int argc, char *argv[])
         }
         Syndrome syn = ECC_Codeword_detect(c, cw);
         if(syn != 0) {
-            printf("error detected!\t");
-            ECC_Codeword_print(cw);
-            printf("\t");
             ECC_Codeword_correct(c, cw, syn);
-            ECC_Codeword_print(cw);
-            printf("\n");
         }
         else {
             printf("no error detected!\n");
@@ -34,7 +28,13 @@ int main(int argc, char *argv[])
         ECC_Codeword_destroy(cw);
     }
     ECC_Code_destroy(c);
-    return 0;
+}
+
+
+int main(int argc, char *argv[])
+{
+	code_create_test();
+	return 0;
 }
 
 
