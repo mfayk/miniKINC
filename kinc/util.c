@@ -48,7 +48,6 @@ void fill2D(float ***mtx, int rows, int cols)
 	int j = 0;
 	for(i=0; i<rows; i++) {
 		for(j=0; j<cols; j++) {
-			//(*mtx)[i][j] = 10.5;	
 			(*mtx)[i][j] = (float)rand()/RAND_MAX;
 		}
 	}
@@ -82,12 +81,6 @@ void print2D(float **mtx, int rows, int cols)
 		printf("\n");
 	}
 }
-
-/*
- * -----------------
- * CODEWORD MATRICES
- * -----------------
- */
 
 /*
  * ---------------

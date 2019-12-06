@@ -31,7 +31,7 @@ struct codeword_t {
 struct code_t { 
 	int n; 
 	int k; 
-	uint8_t p_bits; 
+	uint8_t par; 
 	Data *matrix; 
 	char *scheme;
     ECC_LUT *lut;

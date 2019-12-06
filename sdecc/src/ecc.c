@@ -3,141 +3,61 @@
 #include <string.h>
 #include "ecc.h"
 
-Codeword *ECC_Codeword_init(void);
 Code *ECC_Code_init(void);
 ECC_LUT *ECC_LUT_init(void);
+int ECC_Matrix_load(Code *);
+void ECC_LUT_generate(Code *);
+void ECC_LUT_destroy(Code *);
 
-Codeword *ECC_Codeword_init()
+static inline Parity ECC_Parity_calculate(Code *c, Data dat)
 {
-    Codeword *cw = malloc(sizeof(Codeword));
-    cw->dat = (Data)0;
-    cw->par = (Parity)0;
-    return cw;
-}
-
-void ECC_Codeword_encode(Code *c, Codeword *cw)
-{
-    int i, j;
-    Parity p = 0;
-    Data *par = malloc(sizeof(Data) * c->p_bits);
-    
-    for(i = 0; i < c->p_bits; i++) {
-        par[i] = 0;
-        par[i] = cw->dat & c->matrix[i];
-        for(j = 0; j < c->p_bits-2; j++) {
-            par[i] = par[i] ^ (par[i]>>(1<<j));
-        }
-        par[i] = par[i] & 1;
-        p = p ^ (par[i] << i);
-    }
-    free(par);
-    cw->par = p;
-}
-
-Parity ECC_Parity_get(Code *c, float val)
-{
-    int i, j;
-	Data dat = *(uint32_t *)&val;
-	Data *par = malloc(sizeof(Data) * c->p_bits);
-    Parity p = 0;
-    
-	for(i=0; i<c->p_bits; i++) {
-        par[i] = 0;
-        par[i] = dat & c->matrix[i];
-        for(j = 0; j < c->p_bits-2; j++) {
-            par[i] = par[i] ^ (par[i]>>(1<<j));
-        }
-        par[i] = par[i] & 1;
-        p = p ^ (par[i] << i);
+	Data par[c->par];
+	Parity p = 0;
+	int i;
+	int j;
+	for(i=0; i<c->par; i++) {
+		par[i] = dat & c->matrix[i];
+		for(j=0; j<c->par-2; j++) {
+			par[i] = par[i] ^ (par[i]>>(1<<j));
+		}
+		par[i] = par[i] & 1;
+		p = p ^ (par[i] << i);
 	}
-    free(par);
-
 	return p;
 }
 
-Codeword *ECC_Codeword_create(Code *c, Data dat)
-{
-   	Codeword *cw = malloc(sizeof(Codeword));
-	cw->dat = dat;
-    ECC_Codeword_encode(c, cw);
 
-    return cw;
-}
-
-void ECC_Codeword_destroy(Codeword *cw)
+Code *ECC_Code_create(int n, int k, char *scheme)
 {
-    if(cw) {
-        free(cw);
+  	Code *c = malloc(sizeof(Code));
+	c->n = n;
+    c->k = k;
+    c->par = n - k;
+    c->scheme = strdup(scheme);
+    
+	c->matrix = malloc(sizeof(Data) * (c->n - c->k));
+    int res = ECC_Matrix_load(c);
+    if(res < 0) {
+        c = NULL;
     }
-}
-
-void ECC_Codeword_print(Codeword *cw)
-{
-    printf("%02hhx %08x ", cw->par, cw->dat);
-}
-
-Syndrome ECC_Codeword_detect(Code *c, Codeword *cw) 
-{
-    Codeword *cw_tmp; 
-    cw_tmp = ECC_Codeword_create(c, cw->dat);
-    Syndrome syn = cw->par ^ cw_tmp->par;
-    ECC_Codeword_destroy(cw_tmp);
-    return syn;
-}
-
-Syndrome ECC_Parity_detect(Code *c, Parity sent, float dat)
-{
-	Codeword *cw = ECC_Codeword_create(c, dat);
-	Syndrome syn = sent ^ cw->par;
-	return syn;
-}
-
-int ECC_Parity_EDAC(Code *c, Parity *sent, float *dat)
-{
-	int signal = -1;
-	Data tmp = *(Data *)&(*dat);
-	Codeword *cw = ECC_Codeword_create(c, tmp);
-	Syndrome syn = *sent ^ cw->par;
-	if(syn != 0) {
-		cw->par = *sent;
-		int res = ECC_Codeword_correct(c, cw, syn);
-		if(res != 0) {
-			printf("encountered DUE. cannot correct.\n\n");
-		}
-		else 
-		{
-			*dat = *(float *)&(cw->dat);
-			printf("corrected value:\t%f\n\n", *dat);
-			signal = 1;
-		}
-	}
-	else {
-		signal = 0;
-	}
-	ECC_Codeword_destroy(cw);
-	return signal;
-}
-
-int ECC_Codeword_correct(Code *c, Codeword *cw, Syndrome syn)
-{
-    int i = 0;
-    int signal = -1;
-    while((i<c->n) && (signal < 0)) {
-        if(c->lut->syn[i] == syn) {
-			cw->dat = cw->dat ^ c->lut->cw[i]->dat;
-            cw->par = cw->par ^ c->lut->cw[i]->par;
-            signal = 0;
-            break;
-        }
-        i++;
+    else {
+        ECC_LUT_generate(c);
     }
-	return signal;
+    return c;
 }
 
-float ECC_Codeword_getData(Codeword *cw)
+void ECC_Code_destroy(Code *c)
 {
-	float val = *(float *)&(cw->dat);
-	return val;
+    if(c) {
+    	free(c->scheme);
+		if(c->matrix) { 
+			free(c->matrix); 
+		}
+		if(c->lut) {
+			ECC_LUT_destroy(c);
+		}
+        free(c);
+    }
 }
 
 void ECC_LUT_generate(Code *c)
@@ -212,38 +132,94 @@ int ECC_Matrix_load(Code *c)
 	return res;
 }
 
-Code *ECC_Code_create(int n, int k, char *scheme)
+Parity ECC_Parity_get(Code *c, float val)
 {
-  	Code *c = malloc(sizeof(Code));
-	c->n = n;
-    c->k = k;
-    c->p_bits = n - k;
-    c->scheme = strdup(scheme);
-    
-	c->matrix = malloc(sizeof(Data) * (c->n - c->k));
-    int res = ECC_Matrix_load(c);
-    if(res < 0) {
-        c = NULL;
-    }
-    else {
-        ECC_LUT_generate(c);
-    }
-    return c;
+	Data dat = *(uint32_t *)&val;
+	return ECC_Parity_calculate(c, dat);
 }
 
-void ECC_Code_destroy(Code *c)
+Codeword *ECC_Codeword_create(Code *c, Data dat)
 {
-    if(c) {
-    	free(c->scheme);
-		if(c->matrix) { 
-			free(c->matrix); 
-		}
-		if(c->lut) {
-			ECC_LUT_destroy(c);
-		}
-        free(c);
+   	Codeword *cw = malloc(sizeof(Codeword));
+	cw->dat = dat;
+	cw->par = ECC_Parity_calculate(c, dat);
+
+    return cw;
+}
+
+void ECC_Codeword_destroy(Codeword *cw)
+{
+    if(cw) {
+        free(cw);
     }
 }
+
+void ECC_Codeword_print(Codeword *cw)
+{
+    printf("%02hhx %08x ", cw->par, cw->dat);
+}
+
+void ECC_Codeword_encode(Code *c, Codeword *cw)
+{
+	cw->par = ECC_Parity_calculate(c, cw->dat);
+}
+
+Syndrome ECC_Codeword_detect(Code *c, Codeword *cw) 
+{
+    Parity par = ECC_Parity_calculate(c, cw->dat);
+	return (Syndrome) (cw->par ^ par);
+}
+
+int ECC_Codeword_correct(Code *c, Codeword *cw, Syndrome syn)
+{
+    int i = 0;
+    int signal = -1;
+    while((i<c->n) && (signal < 0)) {
+        if(c->lut->syn[i] == syn) {
+			cw->dat = cw->dat ^ c->lut->cw[i]->dat;
+            cw->par = cw->par ^ c->lut->cw[i]->par;
+            signal = 0;
+            break;
+        }
+        i++;
+    }
+	return signal;
+}
+
+Syndrome ECC_Parity_detect(Code *c, Parity sent, float dat)
+{
+	Codeword *cw = ECC_Codeword_create(c, dat);
+	Syndrome syn = sent ^ cw->par;
+	return syn;
+}
+
+int ECC_Parity_EDAC(Code *c, Parity *sent, float *dat)
+{
+	int signal = -1;
+	Data tmp = *(Data *)&(*dat);
+	Codeword *cw = ECC_Codeword_create(c, tmp);
+	Syndrome syn = *sent ^ cw->par;
+	if(syn != 0) {
+		cw->par = *sent;
+		int res = ECC_Codeword_correct(c, cw, syn);
+		if(res != 0) {
+			printf("encountered DUE. cannot correct.\n\n");
+		}
+		else 
+		{
+			*dat = *(float *)&(cw->dat);
+			signal = 1;
+		}
+	}
+	else {
+		signal = 0;
+	}
+	ECC_Codeword_destroy(cw);
+	return signal;
+}
+
+
+
 
 
 
